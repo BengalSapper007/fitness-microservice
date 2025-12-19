@@ -8,6 +8,8 @@ import {
   Select,
   TextField,
   Grid,
+  Typography,
+  Paper,
 } from "@mui/material";
 import { addActivity } from "../services/api";
 
@@ -16,11 +18,10 @@ const ActivityForm = ({ onActivityAdded }) => {
     type: "RUNNING",
     duration: "",
     caloriesBurned: "",
-    avgHeartRate: "",          // always present
+    avgHeartRate: "",
     additionalMetrics: {},
   });
 
-  // metric keys per type (without HR)
   const metricFields = useMemo(() => {
     switch (activity.type) {
       case "RUNNING":
@@ -45,7 +46,6 @@ const ActivityForm = ({ onActivityAdded }) => {
     }
   }, [activity.type]);
 
-  // map keys to human labels with units
   const labelFor = (key) => {
     switch (key) {
       case "pace":
@@ -105,7 +105,7 @@ const ActivityForm = ({ onActivityAdded }) => {
         ...activity,
         additionalMetrics: {
           ...activity.additionalMetrics,
-          avgHeartRate: activity.avgHeartRate, // include HR inside metrics map too
+          avgHeartRate: activity.avgHeartRate,
         },
       };
       await addActivity(payload);
@@ -123,85 +123,143 @@ const ActivityForm = ({ onActivityAdded }) => {
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={{ mb: 4 }}>
-      <FormControl fullWidth sx={{ mb: 2 }}>
-        <InputLabel id="activity-type-label">Activity Type</InputLabel>
-        <Select
-          labelId="activity-type-label"
-          label="Activity Type"
-          value={activity.type}
-          onChange={(e) =>
-            setActivity({
-              ...activity,
-              type: e.target.value,
-              additionalMetrics: {},
-            })
-          }
-        >
-          <MenuItem value="RUNNING">Running</MenuItem>
-          <MenuItem value="CYCLING">Cycling</MenuItem>
-          <MenuItem value="SWIMMING">Swimming</MenuItem>
-          <MenuItem value="WEIGHT_TRAINING">Weight Training</MenuItem>
-          <MenuItem value="HIIT">HIIT</MenuItem>
-          <MenuItem value="YOGA">Yoga</MenuItem>
-          <MenuItem value="STRETCHING">Stretching</MenuItem>
-          <MenuItem value="WALKING">Walking</MenuItem>
-          <MenuItem value="CARDIO">Cardio</MenuItem>
-        </Select>
-      </FormControl>
+    <Paper
+      elevation={0}
+      sx={{
+        borderRadius: 4,
+        p: 3,
+        bgcolor: "rgba(105, 133, 198, 0.9)",
+        border: "1px solid rgba(148,163,184,0.35)",
+        color: "rgba(248,250,252,0.95)",
+      }}
+    >
+      <Typography variant="h5" fontWeight={700} sx={{ mb: 1 }}>
+        Log a new activity
+      </Typography>
+      <Typography variant="body2" sx={{ mb: 3, opacity: 0.75 }}>
+        Capture core details and optional performance metrics for more accurate
+        insights.
+      </Typography>
 
-      <TextField
-        fullWidth
-        label="Duration (minutes)"
-        type="number"
-        value={activity.duration}
-        onChange={(e) =>
-          setActivity({ ...activity, duration: e.target.value })
-        }
-        sx={{ mb: 2 }}
-      />
+      <Box
+        component="form"
+        onSubmit={handleSubmit}
+        sx={{ display: "flex", flexDirection: "column", gap: 2.2 }}
+      >
+        <FormControl fullWidth>
+          <InputLabel id="activity-type-label" sx={{ color: "rgba(226,232,240,0.8)" }}>
+            Activity Type
+          </InputLabel>
+          <Select
+            labelId="activity-type-label"
+            label="Activity Type"
+            value={activity.type}
+            onChange={(e) =>
+              setActivity({
+                ...activity,
+                type: e.target.value,
+                additionalMetrics: {},
+              })
+            }
+            sx={{
+              borderRadius: 2,
+            }}
+          >
+            <MenuItem value="RUNNING">Running</MenuItem>
+            <MenuItem value="CYCLING">Cycling</MenuItem>
+            <MenuItem value="SWIMMING">Swimming</MenuItem>
+            <MenuItem value="WEIGHT_TRAINING">Weight Training</MenuItem>
+            <MenuItem value="HIIT">HIIT</MenuItem>
+            <MenuItem value="YOGA">Yoga</MenuItem>
+            <MenuItem value="STRETCHING">Stretching</MenuItem>
+            <MenuItem value="WALKING">Walking</MenuItem>
+            <MenuItem value="CARDIO">Cardio</MenuItem>
+          </Select>
+        </FormControl>
 
-      <TextField
-        fullWidth
-        label="Calories Burned (kcal)"
-        type="number"
-        value={activity.caloriesBurned}
-        onChange={(e) =>
-          setActivity({ ...activity, caloriesBurned: e.target.value })
-        }
-        sx={{ mb: 2 }}
-      />
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={4}>
+            <TextField
+              fullWidth
+              label="Duration (min)"
+              type="number"
+              value={activity.duration}
+              onChange={(e) =>
+                setActivity({ ...activity, duration: e.target.value })
+              }
+              InputLabelProps={{ shrink: true }}
+            />
+          </Grid>
 
-      <TextField
-        fullWidth
-        label="Average Heart Rate (bpm)"
-        type="number"
-        value={activity.avgHeartRate}
-        onChange={(e) =>
-          setActivity({ ...activity, avgHeartRate: e.target.value })
-        }
-        sx={{ mb: 2 }}
-      />
+          <Grid item xs={12} sm={4}>
+            <TextField
+              fullWidth
+              label="Calories (kcal)"
+              type="number"
+              value={activity.caloriesBurned}
+              onChange={(e) =>
+                setActivity({ ...activity, caloriesBurned: e.target.value })
+              }
+              InputLabelProps={{ shrink: true }}
+            />
+          </Grid>
 
-      {metricFields.length > 0 && (
-        <Grid container spacing={2} sx={{ mb: 2 }}>
-          {metricFields.map((field) => (
-            <Grid item xs={12} sm={6} key={field}>
-              <TextField
-                fullWidth
-                label={labelFor(field)}
-                value={activity.additionalMetrics[field] || ""}
-                onChange={handleMetricChange(field)}
-              />
-            </Grid>
-          ))}
+          <Grid item xs={12} sm={4}>
+            <TextField
+              fullWidth
+              label="Avg HR (bpm)"
+              type="number"
+              value={activity.avgHeartRate}
+              onChange={(e) =>
+                setActivity({ ...activity, avgHeartRate: e.target.value })
+              }
+              InputLabelProps={{ shrink: true }}
+            />
+          </Grid>
         </Grid>
-      )}
 
-      <Button type="submit" variant="contained" color="primary">
-        Add Activity
-      </Button>
-    </Box>
+        {metricFields.length > 0 && (
+          <>
+            <Typography
+              variant="subtitle2"
+              sx={{ mt: 1, opacity: 0.8, textTransform: "uppercase" }}
+            >
+              Additional metrics
+            </Typography>
+            <Grid container spacing={2}>
+              {metricFields.map((field) => (
+                <Grid item xs={12} sm={6} key={field}>
+                  <TextField
+                    fullWidth
+                    label={labelFor(field)}
+                    value={activity.additionalMetrics[field] || ""}
+                    onChange={handleMetricChange(field)}
+                    InputLabelProps={{ shrink: true }}
+                  />
+                </Grid>
+              ))}
+            </Grid>
+          </>
+        )}
+
+        <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 1 }}>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            sx={{
+              borderRadius: 999,
+              px: 4,
+              py: 1,
+              textTransform: "none",
+              fontWeight: 600,
+            }}
+          >
+            Add Activity
+          </Button>
+        </Box>
+      </Box>
+    </Paper>
   );
 };
 

@@ -18,10 +18,11 @@ const ActivityDetail = () => {
   const [activity, setActivity] = useState(null);
 
   useEffect(() => {
+    let intervalId;
+
     const fetchActivityDetails = async () => {
       try {
-        const data = await getActivityDetail(id); // res.data
-        // expect: { activity, recommendation, improvements, suggestions }
+        const data = await getActivityDetail(id);
         const base = data.activity ?? {};
         setActivity({
           ...base,
@@ -36,7 +37,12 @@ const ActivityDetail = () => {
 
     if (id) {
       fetchActivityDetails();
+      intervalId = setInterval(fetchActivityDetails, 3000);
     }
+
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
   }, [id]);
 
   if (!activity) {
@@ -52,7 +58,7 @@ const ActivityDetail = () => {
   return (
     <Box
       sx={{
-        maxWidth: 900,
+        maxWidth: 960,
         mx: "auto",
         py: 4,
         px: { xs: 2, sm: 3 },
@@ -64,22 +70,28 @@ const ActivityDetail = () => {
       <Box sx={{ mb: 1 }}>
         <Button
           variant="text"
-          onClick={() => navigate("/activities")}
-          sx={{ textTransform: "none" }}
+          onClick={() => navigate(-1)}   // <‑ go back in history
+          sx={{
+            textTransform: "none",
+            color: "rgba(191,219,254,0.9)",
+            px: 0,
+            "&:hover": { backgroundColor: "transparent", opacity: 0.8 },
+          }}
         >
-          ⟵ Back to activities
+          ⟵ Back
         </Button>
       </Box>
 
       <Card
         sx={{
           borderRadius: 3,
-          boxShadow: 4,
-          background:
-            "linear-gradient(135deg, rgba(33,150,243,0.08), rgba(0,230,118,0.08))",
+          boxShadow:
+            "0 22px 55px rgba(15,23,42,0.7), 0 0 0 1px rgba(148,163,184,0.45)",
+          backgroundColor: "rgba(93, 120, 185, 0.9)",
+          color: "rgba(248,250,252,0.96)",
         }}
       >
-        <CardContent>
+        <CardContent sx={{ pb: 3.5 }}>
           <Stack
             direction="row"
             justifyContent="space-between"
@@ -88,10 +100,13 @@ const ActivityDetail = () => {
             sx={{ mb: 2 }}
           >
             <Box>
-              <Typography variant="h4" fontWeight={700} gutterBottom>
-                {activity.type} Session
+              <Typography variant="overline" sx={{ opacity: 0.8 }}>
+                Activity summary
               </Typography>
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="h4" fontWeight={800} gutterBottom>
+                {activity.type} session
+              </Typography>
+              <Typography variant="body2" sx={{ opacity: 0.85 }}>
                 ID: {activity.id}
               </Typography>
             </Box>
@@ -99,18 +114,26 @@ const ActivityDetail = () => {
             <Stack direction="row" spacing={1}>
               <Chip
                 label={`${activity.duration ?? 0} min`}
-                color="primary"
-                variant="filled"
+                sx={{
+                  bgcolor: "rgba(15,23,42,0.9)",
+                  color: "rgba(248,250,252,0.96)",
+                  fontWeight: 600,
+                }}
               />
               <Chip
                 label={`${activity.caloriesBurned ?? 0} kcal`}
-                color="secondary"
                 variant="outlined"
+                sx={{
+                  borderColor: "rgba(226,232,240,0.7)",
+                  color: "rgba(241,245,249,0.95)",
+                  fontWeight: 500,
+                  bgcolor: "rgba(15,23,42,0.35)",
+                }}
               />
             </Stack>
           </Stack>
 
-          <Divider sx={{ my: 2 }} />
+          <Divider sx={{ my: 2, borderColor: "rgba(148,163,184,0.5)" }} />
 
           <Stack
             direction={{ xs: "column", sm: "row" }}
@@ -118,19 +141,28 @@ const ActivityDetail = () => {
             sx={{ mt: 1 }}
           >
             <Box flex={1}>
-              <Typography variant="subtitle2" color="text.secondary">
+              <Typography
+                variant="subtitle2"
+                sx={{ opacity: 0.85, textTransform: "uppercase" }}
+              >
                 Type
               </Typography>
               <Typography sx={{ mb: 1 }}>{activity.type}</Typography>
 
-              <Typography variant="subtitle2" color="text.secondary">
+              <Typography
+                variant="subtitle2"
+                sx={{ opacity: 0.85, textTransform: "uppercase" }}
+              >
                 Duration
               </Typography>
               <Typography sx={{ mb: 1 }}>
                 {activity.duration} minutes
               </Typography>
 
-              <Typography variant="subtitle2" color="text.secondary">
+              <Typography
+                variant="subtitle2"
+                sx={{ opacity: 0.85, textTransform: "uppercase" }}
+              >
                 Calories burned
               </Typography>
               <Typography sx={{ mb: 1 }}>
@@ -139,7 +171,10 @@ const ActivityDetail = () => {
             </Box>
 
             <Box flex={1}>
-              <Typography variant="subtitle2" color="text.secondary">
+              <Typography
+                variant="subtitle2"
+                sx={{ opacity: 0.85, textTransform: "uppercase" }}
+              >
                 Logged on
               </Typography>
               <Typography sx={{ mb: 1 }}>
@@ -156,18 +191,19 @@ const ActivityDetail = () => {
         <Card
           sx={{
             borderRadius: 3,
-            boxShadow: 3,
+            boxShadow:
+              "0 18px 45px rgba(15,23,42,0.6), 0 0 0 1px rgba(148,163,184,0.4)",
           }}
         >
           <CardContent>
-            <Typography variant="h5" fontWeight={600} gutterBottom>
-              Smart Insights
+            <Typography variant="h5" fontWeight={700} gutterBottom>
+              Smart insights
             </Typography>
 
             <Typography
               variant="overline"
               color="primary"
-              sx={{ letterSpacing: 1 }}
+              sx={{ letterSpacing: 1, mb: 0.5, display: "block" }}
             >
               Analysis
             </Typography>

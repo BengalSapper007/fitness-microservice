@@ -1,0 +1,7 @@
+spring.application.name=activity-service
+server.port=8084
+spring.jackson.mapper.sort-properties-alphabetically=false
+
+# Correct MongoDB Atlas config
+spring.data.mongodb.uri=
+#spring.data.mongodb.database=activities

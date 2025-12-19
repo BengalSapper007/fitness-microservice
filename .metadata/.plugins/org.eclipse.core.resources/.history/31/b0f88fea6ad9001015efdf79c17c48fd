@@ -1,0 +1,5 @@
+spring.application.name=ai-service
+
+#Gemini Config
+gemini.api.url=${GEMINI_API_URL}
+gemini.api.key=${GEMINI_API_KEY}

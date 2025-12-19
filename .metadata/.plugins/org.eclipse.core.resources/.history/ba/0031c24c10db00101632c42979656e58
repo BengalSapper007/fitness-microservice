@@ -1,0 +1,19 @@
+# Server Configuration
+server.port=8083
+spring.jackson.mapper.sort-properties-alphabetically=false
+
+# Database Configuration
+spring.datasource.url=jdbc:mysql://localhost:3306/fitness_db?createDatabaseIfNotExist=true
+spring.datasource.username=root
+spring.datasource.password=Pinak@2005
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+
+# Eureka discovery
+eureka.client.register-with-eureka=true
+eureka.client.fetch-registry=true
+eureka.client.service-url.defaultZone=http://localhost:8761/eureka/
+
+# Retry in case server is not yet started
+eureka.instance.lease-renewal-interval-in-seconds=30
+eureka.instance.lease-expiration-duration-in-seconds=90

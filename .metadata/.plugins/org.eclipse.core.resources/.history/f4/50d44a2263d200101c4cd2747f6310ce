@@ -1,0 +1,8 @@
+spring.application.name=activity-service
+
+server.port=8084
+spring.jackson.mapper.sort-properties-alphabetically=false
+
+# MongoDB Atlas Configuration
+spring.data.mongodb.uri=mongodb+srv://pmukherjee6905_db_user:password@activities.mgmsjih.mongodb.net/activities?retryWrites=true&w=majority
+spring.data.mongodb.database=activities

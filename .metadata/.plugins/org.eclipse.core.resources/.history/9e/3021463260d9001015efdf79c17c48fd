@@ -1,0 +1,48 @@
+package com.fitness.aiservice.service;
+
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.stereotype.Service;
+
+import com.fitness.aiservice.repository.RecommendationRepository;
+import com.fitness.modelservice.Activity;
+import com.fitness.modelservice.Recommendation;
+import com.rabbitmq.client.Channel;
+import org.springframework.amqp.support.AmqpHeaders;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+@Service
+@Slf4j
+@RequiredArgsConstructor
+public class ActivityMessageListener {
+
+    private final ActivityAIService aiService;
+    private final RecommendationRepository recommendationRepository;
+
+    @RabbitListener(queues = "${rabbitmq.queue.name}", ackMode = "MANUAL")
+    public void processActivity(
+            Activity activity,
+            Channel channel,
+            @Header(AmqpHeaders.DELIVERY_TAG) long deliveryTag) {
+
+        try {
+            log.info("Received activity for processing : {}", activity.getId());
+
+            Recommendation recommendation = aiService.generateRecommendation(activity);
+            recommendationRepository
+            log.info("Generated Recommendation : {}", recommendation);
+
+            channel.basicAck(deliveryTag, false);
+        } catch (Exception ex) {
+            log.error("Processing failed for activity {} : {}", activity.getId(), ex.getMessage());
+
+            try {
+                channel.basicNack(deliveryTag, false, false);
+            } catch (Exception nackEx) {
+                log.error("Error during message NACK: {}", nackEx.getMessage());
+            }
+        }
+    }
+}

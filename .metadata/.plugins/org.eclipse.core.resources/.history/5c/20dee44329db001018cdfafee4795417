@@ -1,0 +1,28 @@
+server.port=8080
+
+
+# Discovery-based routing
+spring.cloud.gateway.discovery.locator.enabled=true
+spring.cloud.gateway.discovery.locator.lower-case-service-id=true
+
+# Actuator
+management.endpoints.web.exposure.include=*
+management.endpoint.gateway.enabled=true
+
+
+security.oauth2.resourceserver.jwt.jwk-set-uri="http://localhost:8181/realms/fitness-oauth2/protocol/openid-connect/certs"
+
+# User Service
+spring.cloud.gateway.routes[0].id=user-service
+spring.cloud.gateway.routes[0].uri=lb://USER-SERVICE
+spring.cloud.gateway.routes[0].predicates[0]=Path=/api/users/**
+
+# AI Service
+spring.cloud.gateway.routes[1].id=ai-service
+spring.cloud.gateway.routes[1].uri=lb://AI-SERVICE
+spring.cloud.gateway.routes[1].predicates[0]=Path=/api/recommendations/**
+
+# Activity Service
+spring.cloud.gateway.routes[2].id=activity-service
+spring.cloud.gateway.routes[2].uri=lb://ACTIVITY-SERVICE
+spring.cloud.gateway.routes[2].predicates[0]=Path=/api/activities/**

@@ -1,0 +1,12 @@
+package com.fitness.gateway.user;
+
+public class Snippet {
+	public static void main(String[] args) {
+		<dependency>
+		  <groupId>org.projectlombok</groupId>
+		  <artifactId>lombok</artifactId>
+		  <optional>true</optional>
+		</dependency>
+	}
+}
+
